@@ -1,32 +1,33 @@
 import Workshop from '../models/Workshop.model.js';
+import User from '../models/User.model.js';
 
-export const createWorkshop = async (req, res, next) => {
+export const createWorkshopAdmin = async (req, res, next) => {
   try {
-    const { title, description, date, time, duration, meetingLink } = req.body;
+    const { title, description, date, time, duration, meetingLink, hostName, hostLinkedIn, thumbnail } = req.body;
 
-    if (!title || !description || !date || !time || !duration || !meetingLink) {
+    if (!title || !description || !date || !time || !duration || !meetingLink || !hostName) {
       return res.status(400).json({
         success: false,
-        message: 'All fields (title, description, date, time, duration, meetingLink) are required'
+        message: 'All fields (title, description, date, time, duration, meetingLink, hostName) are required'
       });
     }
 
     const workshop = await Workshop.create({
       title,
       description,
-      hostName: req.user.name,
-      hostEmail: req.user.email,
-      hostId: req.userId,
+      hostName,
+      hostLinkedIn,
+      thumbnail,
       date: new Date(date),
       time,
       duration,
       meetingLink,
-      status: 'pending' // requires admin approval
+      status: 'approved' // directly approved since it is created by admin
     });
 
     res.status(201).json({
       success: true,
-      message: 'Workshop submitted successfully. Pending administrator approval.',
+      message: 'Workshop created successfully by administrator.',
       data: workshop
     });
   } catch (error) {

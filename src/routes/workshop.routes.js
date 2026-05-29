@@ -1,6 +1,5 @@
 import express from 'express';
 import {
-  createWorkshop,
   getApprovedWorkshops,
   enrollInWorkshop,
   getEnrolledWorkshops,
@@ -10,7 +9,6 @@ import userAuth from '../middleware/userAuth.middleware.js';
 
 const router = express.Router();
 
-router.post('/', userAuth, createWorkshop);
 router.get('/', getApprovedWorkshops);
 router.get('/enrolled', userAuth, getEnrolledWorkshops);
 router.get('/hosted', userAuth, getMyHostedWorkshops);

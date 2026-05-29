@@ -9,6 +9,7 @@ import CourseEnrollment from "../models/CourseEnrollment.model.js";
 import SessionSlot from "../models/SessionSlot.model.js";
 import Workshop from "../models/Workshop.model.js";
 import Internship from "../models/Internship.model.js";
+import { createWorkshopAdmin } from "../controllers/workshop.controller.js";
 
 const router = express.Router();
 
@@ -203,6 +204,9 @@ router.get("/workshops", adminAuth, async (req, res, next) => {
     next(error);
   }
 });
+
+// Admin: Create workshop directly
+router.post("/workshops", adminAuth, createWorkshopAdmin);
 
 // Admin: Get pending workshops
 router.get("/workshops/pending", adminAuth, async (req, res, next) => {

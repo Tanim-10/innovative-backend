@@ -23,9 +23,20 @@ const userSchema = new mongoose.Schema(
 		totalOrders: { type: Number, default: 0 },
 		totalAmountSpent: { type: Number, default: 0 },
 		role: { type: String, enum: ['student', 'tutor', 'admin'], default: 'student' },
-		tutorStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+		tutorStatus: { type: String, enum: ['pending', 'approved', 'rejected'] },
 		bio: { type: String, default: '' },
 		expertise: [{ type: String }],
+		socials: {
+			linkedin: { type: String, trim: true },
+			googleScholar: { type: String, trim: true },
+			orcid: { type: String, trim: true },
+			medium: { type: String, trim: true }
+		},
+		education: {
+			college: { type: String, trim: true },
+			graduationYear: { type: Number },
+			course: { type: String, trim: true }
+		},
 		addresses: [
 			{
 				fullName: { type: String },

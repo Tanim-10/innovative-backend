@@ -2,11 +2,59 @@ import User from '../models/User.model.js';
 
 export const applyAsTutor = async (req, res, next) => {
   try {
-    const { bio, expertise } = req.body;
-    if (!bio || !expertise || !Array.isArray(expertise) || expertise.length === 0) {
+    const { bio, expertise, socials, education } = req.body;
+    
+    // Bio validation (required, min 50 characters)
+    if (!bio || typeof bio !== 'string' || bio.trim().length < 50) {
       return res.status(400).json({
         success: false,
-        message: 'Bio and expertise list are required'
+        message: 'Bio is required and must be at least 50 characters'
+      });
+    }
+
+    // Expertise validation (required, non-empty array)
+    if (!expertise || !Array.isArray(expertise) || expertise.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Expertise list is required'
+      });
+    }
+
+    // Socials validation (linkedin is required)
+    if (!socials || typeof socials !== 'object' || !socials.linkedin || typeof socials.linkedin !== 'string' || !socials.linkedin.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'LinkedIn profile link is required'
+      });
+    }
+
+    // Education validation (college, course, graduationYear required)
+    if (!education || typeof education !== 'object') {
+      return res.status(400).json({
+        success: false,
+        message: 'Education details are required'
+      });
+    }
+
+    const { college, course, graduationYear } = education;
+    if (!college || typeof college !== 'string' || !college.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'College/University name is required'
+      });
+    }
+    if (!course || typeof course !== 'string' || !course.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Course/Major is required'
+      });
+    }
+
+    const gradYear = Number(graduationYear);
+    if (!graduationYear || isNaN(gradYear) || gradYear < 1900 || gradYear > new Date().getFullYear() + 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid graduation year is required'
       });
     }
 
@@ -19,6 +67,18 @@ export const applyAsTutor = async (req, res, next) => {
     user.tutorStatus = 'pending';
     user.bio = bio;
     user.expertise = expertise;
+    user.socials = {
+      linkedin: socials.linkedin.trim(),
+      googleScholar: socials.googleScholar ? socials.googleScholar.trim() : '',
+      orcid: socials.orcid ? socials.orcid.trim() : '',
+      medium: socials.medium ? socials.medium.trim() : ''
+    };
+    user.education = {
+      college: college.trim(),
+      course: course.trim(),
+      graduationYear: gradYear
+    };
+
     await user.save();
 
     res.json({
@@ -28,7 +88,9 @@ export const applyAsTutor = async (req, res, next) => {
         role: user.role,
         tutorStatus: user.tutorStatus,
         bio: user.bio,
-        expertise: user.expertise
+        expertise: user.expertise,
+        socials: user.socials,
+        education: user.education
       }
     });
   } catch (error) {
