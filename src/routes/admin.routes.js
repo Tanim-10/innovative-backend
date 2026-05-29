@@ -4,6 +4,11 @@ import adminAuth from "../middleware/adminAuth.middleware.js";
 import upload, { uploadVideo, uploadToCloudinary, uploadOfflinePdf, uploadOfflineDoc } from "../middleware/upload.middleware.js";
 import { createProduct, updateProduct, getAllProductsAdmin } from "../controllers/product.controller.js";
 import { cleanupOldInvoiceUploads } from "../utils/cleanupInvoiceCloudinary.js";
+import User from "../models/User.model.js";
+import CourseEnrollment from "../models/CourseEnrollment.model.js";
+import SessionSlot from "../models/SessionSlot.model.js";
+import Workshop from "../models/Workshop.model.js";
+import Internship from "../models/Internship.model.js";
 
 const router = express.Router();
 
@@ -119,6 +124,149 @@ router.post("/cleanup-invoices", adminAuth, async (req, res, next) => {
   try {
     const result = await cleanupOldInvoiceUploads();
     res.json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin Tutor Management
+router.get("/tutors", adminAuth, async (req, res, next) => {
+  try {
+    const tutors = await User.find({ role: "tutor" }).select("-password");
+    res.json({ success: true, data: tutors });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/tutors/:id/status", adminAuth, async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status" });
+    }
+
+    const tutor = await User.findById(req.params.id);
+    if (!tutor) {
+      return res.status(404).json({ success: false, message: "Tutor not found" });
+    }
+
+    tutor.tutorStatus = status;
+    if (status === "rejected") {
+      tutor.role = "student";
+    }
+    await tutor.save();
+
+    res.json({ success: true, message: `Tutor registration ${status} successfully` });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin Robotics Sales metrics
+router.get("/sales/robotics", adminAuth, async (req, res, next) => {
+  try {
+    const enrollments = await CourseEnrollment.find();
+    const bookedSessions = await SessionSlot.find({ status: "booked" });
+
+    const totalCourseSales = enrollments.reduce((sum, e) => sum + e.amountPaid, 0);
+    const totalSessionSales = bookedSessions.reduce((sum, s) => sum + s.cost, 0);
+
+    res.json({
+      success: true,
+      data: {
+        totalCourseSales,
+        totalSessionSales,
+        totalSales: totalCourseSales + totalSessionSales,
+        enrollmentsCount: enrollments.length,
+        bookedSessionsCount: bookedSessions.length
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin: Get all workshops (with optional status query)
+router.get("/workshops", adminAuth, async (req, res, next) => {
+  try {
+    const { status } = req.query;
+    const query = {};
+    if (status && ["pending", "approved", "rejected"].includes(status)) {
+      query.status = status;
+    }
+    const workshops = await Workshop.find(query)
+      .populate("hostId", "name email")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: workshops });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin: Get pending workshops
+router.get("/workshops/pending", adminAuth, async (req, res, next) => {
+  try {
+    const pending = await Workshop.find({ status: "pending" })
+      .populate("hostId", "name email");
+    res.json({ success: true, data: pending });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin: Approve or Reject a workshop
+router.patch("/workshops/:id/status", adminAuth, async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ success: false, message: "Status must be 'approved' or 'rejected'" });
+    }
+
+    const workshop = await Workshop.findById(req.params.id);
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: "Workshop not found" });
+    }
+
+    workshop.status = status;
+    await workshop.save();
+
+    res.json({ success: true, message: `Workshop ${status} successfully`, data: workshop });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin: View all internship applications
+router.get("/internships", adminAuth, async (req, res, next) => {
+  try {
+    const applications = await Internship.find()
+      .populate("studentId", "name email")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: applications });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin: Review/Update internship application status
+router.patch("/internships/:id/status", adminAuth, async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const allowed = ['pending', 'under-review', 'shortlisted', 'rejected'];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid internship status" });
+    }
+
+    const application = await Internship.findById(req.params.id);
+    if (!application) {
+      return res.status(404).json({ success: false, message: "Internship application not found" });
+    }
+
+    application.status = status;
+    await application.save();
+
+    res.json({ success: true, message: `Application status updated to ${status}`, data: application });
   } catch (error) {
     next(error);
   }

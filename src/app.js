@@ -23,6 +23,12 @@ import contactRoutes from './routes/contact.routes.js';
 import deliveryRoutes from './routes/delivery.routes.js';
 import offlineOrderRoutes from './routes/offlineOrder.routes.js';
 import couponRoutes from './routes/coupon.routes.js';
+import tutorRoutes from './routes/tutor.routes.js';
+import courseRoutes from './routes/course.routes.js';
+import sessionRoutes from './routes/session.routes.js';
+import workshopRoutes from './routes/workshop.routes.js';
+import internshipRoutes from './routes/internship.routes.js';
+
 
 dotenv.config();
 
@@ -82,6 +88,11 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/offline-orders", offlineOrderRoutes);
 app.use("/api/coupons", couponRoutes);
+app.use("/api/tutors", tutorRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/workshops", workshopRoutes);
+app.use("/api/internships", internshipRoutes);
 
 app.use(errorHandler);
 

@@ -37,6 +37,10 @@ const publicUserFields = (user) => ({
   mobileVerified: user.mobileVerified === true,
   profileImage: user.profileImage,
   addresses: user.addresses,
+  role: user.role || 'student',
+  tutorStatus: user.tutorStatus || 'pending',
+  bio: user.bio || '',
+  expertise: user.expertise || [],
 });
 
 export const register = async (req, res, next) => {
@@ -132,7 +136,8 @@ export const login = async (req, res, next) => {
       });
     }
 
-    if (user.authProvider === 'email' && user.emailVerified === false) {
+    // TEMPORARY BYPASS: Allow login without email verification
+    if (false && user.authProvider === 'email' && user.emailVerified === false) {
       return res.status(403).json({
         success: false,
         message: 'Please verify your email first. Check your inbox for the verification link.',

@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
 		isBlocked: { type: Boolean, default: false },
 		totalOrders: { type: Number, default: 0 },
 		totalAmountSpent: { type: Number, default: 0 },
+		role: { type: String, enum: ['student', 'tutor', 'admin'], default: 'student' },
+		tutorStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+		bio: { type: String, default: '' },
+		expertise: [{ type: String }],
 		addresses: [
 			{
 				fullName: { type: String },
