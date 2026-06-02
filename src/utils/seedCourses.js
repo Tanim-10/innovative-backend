@@ -311,6 +311,8 @@ const seedCoursesAndSessions = async () => {
         time: '11:00 AM - 01:00 PM',
         duration: '2 hours',
         meetingLink: 'https://meet.google.com/ros-amr-demo',
+        googleFormLink: 'https://forms.gle/dummy-workshop-form',
+        showOnHomepage: true,
         status: 'approved'
       },
       {
@@ -323,7 +325,9 @@ const seedCoursesAndSessions = async () => {
         time: '03:00 PM - 04:30 PM',
         duration: '1.5 hours',
         meetingLink: 'https://meet.google.com/esp32-agri-demo',
-        status: 'pending'
+        googleFormLink: 'https://forms.gle/dummy-workshop-form',
+        showOnHomepage: true,
+        status: 'approved'
       }
     ];
     await Workshop.insertMany(workshopsData);

@@ -12,8 +12,10 @@ const workshopSchema = new mongoose.Schema({
   time: { type: String, required: true },
   duration: { type: String, required: true },
   meetingLink: { type: String, required: true },
+  googleFormLink: { type: String, required: true },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
-  enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  showOnHomepage: { type: Boolean, default: false }
 }, { timestamps: true });
 
 const Workshop = mongoose.model('Workshop', workshopSchema);

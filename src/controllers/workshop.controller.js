@@ -3,12 +3,12 @@ import User from '../models/User.model.js';
 
 export const createWorkshopAdmin = async (req, res, next) => {
   try {
-    const { title, description, date, time, duration, meetingLink, hostName, hostLinkedIn, thumbnail } = req.body;
+    const { title, description, date, time, duration, meetingLink, googleFormLink, hostName, hostLinkedIn, thumbnail } = req.body;
 
-    if (!title || !description || !date || !time || !duration || !meetingLink || !hostName) {
+    if (!title || !description || !date || !time || !duration || !meetingLink || !googleFormLink || !hostName) {
       return res.status(400).json({
         success: false,
-        message: 'All fields (title, description, date, time, duration, meetingLink, hostName) are required'
+        message: 'All fields (title, description, date, time, duration, meetingLink, googleFormLink, hostName) are required'
       });
     }
 
@@ -22,6 +22,7 @@ export const createWorkshopAdmin = async (req, res, next) => {
       time,
       duration,
       meetingLink,
+      googleFormLink,
       status: 'approved' // directly approved since it is created by admin
     });
 
@@ -41,10 +42,17 @@ export const getApprovedWorkshops = async (req, res, next) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const workshops = await Workshop.find({
+    const { homepage } = req.query;
+    const query = {
       status: 'approved',
       date: { $gte: today }
-    })
+    };
+
+    if (homepage === 'true') {
+      query.showOnHomepage = true;
+    }
+
+    const workshops = await Workshop.find(query)
     .populate('hostId', 'name profileImage bio')
     .sort({ date: 1, time: 1 });
 
@@ -103,6 +111,50 @@ export const getMyHostedWorkshops = async (req, res, next) => {
     }).sort({ date: -1 });
 
     res.json({ success: true, data: workshops });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getWorkshopById = async (req, res, next) => {
+  try {
+    const workshop = await Workshop.findById(req.params.id)
+      .populate('hostId', 'name profileImage bio');
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: 'Workshop not found' });
+    }
+    res.json({ success: true, data: workshop });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateWorkshopAdmin = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { showOnHomepage, ...otherFields } = req.body;
+
+    if (showOnHomepage === true) {
+      const count = await Workshop.countDocuments({ showOnHomepage: true, _id: { $ne: id } });
+      if (count >= 4) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cannot feature more than 4 workshops on the homepage. Please unfeature another one first.'
+        });
+      }
+    }
+
+    const workshop = await Workshop.findByIdAndUpdate(
+      id,
+      { showOnHomepage, ...otherFields },
+      { new: true }
+    );
+
+    if (!workshop) {
+      return res.status(404).json({ success: false, message: 'Workshop not found' });
+    }
+
+    res.json({ success: true, data: workshop });
   } catch (error) {
     next(error);
   }

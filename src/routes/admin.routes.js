@@ -9,7 +9,7 @@ import CourseEnrollment from "../models/CourseEnrollment.model.js";
 import SessionSlot from "../models/SessionSlot.model.js";
 import Workshop from "../models/Workshop.model.js";
 import Internship from "../models/Internship.model.js";
-import { createWorkshopAdmin } from "../controllers/workshop.controller.js";
+import { createWorkshopAdmin, updateWorkshopAdmin } from "../controllers/workshop.controller.js";
 
 const router = express.Router();
 
@@ -207,6 +207,7 @@ router.get("/workshops", adminAuth, async (req, res, next) => {
 
 // Admin: Create workshop directly
 router.post("/workshops", adminAuth, createWorkshopAdmin);
+router.patch("/workshops/:id", adminAuth, updateWorkshopAdmin);
 
 // Admin: Get pending workshops
 router.get("/workshops/pending", adminAuth, async (req, res, next) => {

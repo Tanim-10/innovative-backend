@@ -28,6 +28,7 @@ import courseRoutes from './routes/course.routes.js';
 import sessionRoutes from './routes/session.routes.js';
 import workshopRoutes from './routes/workshop.routes.js';
 import internshipRoutes from './routes/internship.routes.js';
+import galleryRoutes from './routes/gallery.routes.js';
 
 
 dotenv.config();
@@ -93,6 +94,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/workshops", workshopRoutes);
 app.use("/api/internships", internshipRoutes);
+app.use("/api/gallery", galleryRoutes);
 
 app.use(errorHandler);
 

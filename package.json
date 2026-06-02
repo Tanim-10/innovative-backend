@@ -9,6 +9,7 @@
     "start": "node src/server.js",
     "seed-admin": "node src/utils/seedAdmin.js",
     "seed-courses": "node src/utils/seedCourses.js",
+    "seed-dummy": "node src/utils/seedDummyData.js",
     "cleanup-db": "node src/utils/cleanupDatabase.js"
   },
   "dependencies": {
