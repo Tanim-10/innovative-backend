@@ -87,7 +87,36 @@ const productSchema = new mongoose.Schema(
         url: { type: String, required: true },
         publicId: { type: String, default: '' }
       }
-    ]
+    ],
+
+    isProject: {
+      type: Boolean,
+      default: false
+    },
+
+    projectType: {
+      type: String,
+      enum: ['combo_components', 'ready_made']
+    },
+
+    components: [
+      {
+        type: String
+      }
+    ],
+
+    difficulty: {
+      type: String,
+      enum: ['beginner', 'intermediate', 'advanced']
+    },
+
+    estimatedBuildTime: {
+      type: String
+    },
+
+    documentation: {
+      type: String
+    }
   },
   { timestamps: true }
 );

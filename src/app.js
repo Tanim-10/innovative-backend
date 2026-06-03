@@ -29,6 +29,8 @@ import sessionRoutes from './routes/session.routes.js';
 import workshopRoutes from './routes/workshop.routes.js';
 import internshipRoutes from './routes/internship.routes.js';
 import galleryRoutes from './routes/gallery.routes.js';
+import projectRoutes from './routes/project.routes.js';
+import mentorshipRoutes from './routes/mentorship.routes.js';
 
 
 dotenv.config();
@@ -95,6 +97,8 @@ app.use("/api/sessions", sessionRoutes);
 app.use("/api/workshops", workshopRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/mentorships", mentorshipRoutes);
 
 app.use(errorHandler);
 

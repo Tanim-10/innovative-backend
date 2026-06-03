@@ -42,7 +42,7 @@ export const getProductById = async (req, res, next) => {
  */
 export const getAllProductsAdmin = async (req, res, next) => {
   try {
-    const products = await Product.find({}).sort({ createdAt: -1 }).lean();
+    const products = await Product.find({ isProject: { $ne: true } }).sort({ createdAt: -1 }).lean();
     const payload = {
       success: true,
       products,
@@ -75,7 +75,7 @@ export const getAllProducts = async (req, res, next) => {
 
     // Admin-only: when request has admin auth, return all products (no pagination, full docs) for admin Product page
     if (req.admin) {
-      const query = {};
+      const query = { isProject: { $ne: true } };
       if (category) {
         const safeCat = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const catRegex = new RegExp(safeCat.replace(/-/g, '[-\\s&/]*'), 'i');
@@ -128,7 +128,7 @@ export const getAllProducts = async (req, res, next) => {
       return res.status(200).json(cached);
     }
 
-    const query = { status: 'active' };
+    const query = { status: 'active', isProject: { $ne: true } };
 
     if (category) {
       const safeCat = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
