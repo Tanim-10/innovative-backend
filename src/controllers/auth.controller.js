@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import User from '../models/User.model.js';
+import Admin from '../models/Admin.model.js';
 import { sendWelcomeEmail, sendPasswordResetEmail, sendVerificationEmail, getFrontendBaseUrl } from '../utils/mailer.js';
 import { normalizeIndianMobile, isValidIndianMobile10 } from '../utils/mobileOtp.util.js';
 
@@ -122,51 +123,77 @@ export const login = async (req, res, next) => {
     }
 
     // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
+    let user = await User.findOne({ email: email.toLowerCase() });
+    let token;
+    let userResponse;
+
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
-    }
-    if (user.isBlocked || user.status === 'blocked') {
-      return res.status(403).json({
-        success: false,
-        message: 'Account is blocked'
-      });
-    }
+      // Check Admin collection
+      const admin = await Admin.findOne({ email: email.toLowerCase() });
+      if (!admin) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials'
+        });
+      }
+      const isPasswordValid = await admin.comparePassword(password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials'
+        });
+      }
+      if (!admin.isActive) {
+        return res.status(403).json({
+          success: false,
+          message: 'Admin account is deactivated'
+        });
+      }
 
-    // TEMPORARY BYPASS: Allow login without email verification
-    if (false && user.authProvider === 'email' && user.emailVerified === false) {
-      return res.status(403).json({
-        success: false,
-        message: 'Please verify your email first. Check your inbox for the verification link.',
+      // Generate admin token
+      token = jwt.sign({ email: admin.email, role: 'admin' }, process.env.JWT_SECRET, {
+        expiresIn: '7d'
       });
+      userResponse = {
+        _id: admin._id,
+        id: admin._id,
+        name: admin.email.split('@')[0] + ' (Admin)',
+        email: admin.email,
+        role: 'admin',
+        addresses: [],
+        createdAt: admin.createdAt
+      };
+    } else {
+      if (user.isBlocked || user.status === 'blocked') {
+        return res.status(403).json({
+          success: false,
+          message: 'Account is blocked'
+        });
+      }
+
+      // Google (or legacy) account with no password
+      if (!user.password) {
+        return res.status(401).json({
+          success: false,
+          message:
+            user.authProvider === 'google'
+              ? 'You signed in with Google, so this account has no password yet. Use “Forgot password” with this email to create one, then you can log in with email and password.'
+              : 'No password is set for this account. Use “Forgot password” with this email to set a password.',
+        });
+      }
+
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials'
+        });
+      }
+
+      // Generate token
+      token = generateToken(user._id);
+      userResponse = publicUserFields(user);
     }
-
-    // Google (or legacy) account with no password — set one via Forgot password
-    if (!user.password) {
-      return res.status(401).json({
-        success: false,
-        message:
-          user.authProvider === 'google'
-            ? 'You signed in with Google, so this account has no password yet. Use “Forgot password” with this email to create one, then you can log in with email and password.'
-            : 'No password is set for this account. Use “Forgot password” with this email to set a password.',
-      });
-    }
-
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
-    }
-
-    // Generate token
-    const token = generateToken(user._id);
-
-    const userResponse = publicUserFields(user);
 
     res.json({
       success: true,
@@ -263,7 +290,25 @@ export const googleLogin = async (req, res, next) => {
 
 export const getMe = async (req, res, next) => {
   try {
+    if (req.isAdmin && req.admin) {
+      return res.json({
+        success: true,
+        data: {
+          _id: req.admin.id,
+          id: req.admin.id,
+          email: req.admin.email,
+          name: req.admin.name + ' (Admin)',
+          role: 'admin',
+          addresses: [],
+          createdAt: new Date().toISOString()
+        }
+      });
+    }
+
     const userId = req.userId; // Set by auth middleware
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
     const user = await User.findById(userId);
     if (!user) {

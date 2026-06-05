@@ -6,12 +6,14 @@ import {
   addAddress,
   updateAddress,
   deleteAddress,
-  setDefaultAddress
+  setDefaultAddress,
+  getPublicProfile
 } from '../controllers/profile.controller.js';
 import userAuth from '../middleware/userAuth.middleware.js';
 
 const router = express.Router();
 
+router.get('/profile/:userId', getPublicProfile);
 router.get('/', userAuth, getProfile);
 router.put('/', userAuth, updateProfile);
 router.put('/change-password', userAuth, changePassword);
