@@ -5,7 +5,6 @@ import upload, { uploadVideo, uploadToCloudinary, uploadOfflinePdf, uploadOfflin
 import { createProduct, updateProduct, getAllProductsAdmin } from "../controllers/product.controller.js";
 import { cleanupOldInvoiceUploads } from "../utils/cleanupInvoiceCloudinary.js";
 import User from "../models/User.model.js";
-import CourseEnrollment from "../models/CourseEnrollment.model.js";
 import SessionSlot from "../models/SessionSlot.model.js";
 import Workshop from "../models/Workshop.model.js";
 import Internship from "../models/Internship.model.js";
@@ -167,19 +166,17 @@ router.patch("/tutors/:id/status", adminAuth, async (req, res, next) => {
 // Admin Robotics Sales metrics
 router.get("/sales/robotics", adminAuth, async (req, res, next) => {
   try {
-    const enrollments = await CourseEnrollment.find();
     const bookedSessions = await SessionSlot.find({ status: "booked" });
 
-    const totalCourseSales = enrollments.reduce((sum, e) => sum + e.amountPaid, 0);
     const totalSessionSales = bookedSessions.reduce((sum, s) => sum + s.cost, 0);
 
     res.json({
       success: true,
       data: {
-        totalCourseSales,
+        totalCourseSales: 0,
         totalSessionSales,
-        totalSales: totalCourseSales + totalSessionSales,
-        enrollmentsCount: enrollments.length,
+        totalSales: totalSessionSales,
+        enrollmentsCount: 0,
         bookedSessionsCount: bookedSessions.length
       }
     });

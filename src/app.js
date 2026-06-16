@@ -24,14 +24,11 @@ import deliveryRoutes from './routes/delivery.routes.js';
 import offlineOrderRoutes from './routes/offlineOrder.routes.js';
 import couponRoutes from './routes/coupon.routes.js';
 import tutorRoutes from './routes/tutor.routes.js';
-import courseRoutes from './routes/course.routes.js';
 import sessionRoutes from './routes/session.routes.js';
 import workshopRoutes from './routes/workshop.routes.js';
 import internshipRoutes from './routes/internship.routes.js';
 import galleryRoutes from './routes/gallery.routes.js';
 import projectRoutes from './routes/project.routes.js';
-import mentorshipRoutes from './routes/mentorship.routes.js';
-import ideasRoutes from './routes/ideas.routes.js';
 
 
 dotenv.config();
@@ -93,14 +90,11 @@ app.use("/api/delivery", deliveryRoutes);
 app.use("/api/offline-orders", offlineOrderRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/tutors", tutorRoutes);
-app.use("/api/courses", courseRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/workshops", workshopRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/projects", projectRoutes);
-app.use("/api/mentorships", mentorshipRoutes);
-app.use("/api/ideas", ideasRoutes);
 
 app.use(errorHandler);
 

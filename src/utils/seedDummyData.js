@@ -3,8 +3,6 @@ import dotenv from 'dotenv';
 import connectDB from '../config/db.js';
 import User from '../models/User.model.js';
 import Admin from '../models/Admin.model.js';
-import Course from '../models/Course.model.js';
-import CourseEnrollment from '../models/CourseEnrollment.model.js';
 import SessionSlot from '../models/SessionSlot.model.js';
 import Workshop from '../models/Workshop.model.js';
 import Internship from '../models/Internship.model.js';
@@ -18,9 +16,7 @@ const seedAllDummyData = async () => {
 
     console.log('Cleaning up existing database...');
     
-    // Clear courses, enrollments, slots, workshops, internships
-    await Course.deleteMany({});
-    await CourseEnrollment.deleteMany({});
+    // Clear slots, workshops, internships
     await SessionSlot.deleteMany({});
     await Workshop.deleteMany({});
     await Internship.deleteMany({});
@@ -130,59 +126,6 @@ const seedAllDummyData = async () => {
       await student.save();
       console.log(`Created student: ${student.name}`);
     }
-
-    console.log('Seeding courses...');
-
-    const coursesData = [
-      {
-        tutorId: croft._id,
-        title: 'ROS2 Fundamentals: Robotics Operating System for Beginners',
-        description: 'Master the fundamentals of ROS2, including nodes, topics, services, actions, and custom interfaces. Build a simulated differential drive robot and navigate it using Nav2.',
-        difficulty: 'beginner',
-        topic: 'ROS',
-        price: 1499,
-        thumbnailUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
-        isPublished: true,
-        lectures: [
-          { title: 'Introduction to ROS2 Architecture', description: 'Learn the core design principles.', videoUrl: 'https://www.youtube.com/watch?v=999o8W6j558' },
-          { title: 'Understanding Nodes and Executables', description: 'Write your first Python node.', videoUrl: 'https://www.youtube.com/watch?v=999o8W6j558' }
-        ]
-      },
-      {
-        tutorId: aisha._id,
-        title: 'ESP32 IoT Nodes: Industrial Sensor Networks',
-        description: 'Learn to build robust, low-power IoT sensor nodes using the ESP32 microcontroller, FreeRTOS, and MQTT.',
-        difficulty: 'intermediate',
-        topic: 'IoT',
-        price: 999,
-        thumbnailUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-        isPublished: true,
-        lectures: [
-          { title: 'Setting up ESP-IDF', description: 'Initialize the framework.', videoUrl: 'https://www.youtube.com/watch?v=999o8W6j558' },
-          { title: 'FreeRTOS Tasks', description: 'Design multi-threaded apps.', videoUrl: 'https://www.youtube.com/watch?v=999o8W6j558' }
-        ]
-      },
-      {
-        tutorId: liam._id,
-        title: 'Arduino Firmware: Writing Clean Register Drivers',
-        description: 'Go beyond standard library wrappers. Learn register-level programming.',
-        difficulty: 'advanced',
-        topic: 'Arduino',
-        price: 0,
-        thumbnailUrl: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=800&q=80',
-        isPublished: true,
-        lectures: [
-          { title: 'AVR Register Level Access', description: 'Bypass digitalWrite.', videoUrl: 'https://www.youtube.com/watch?v=999o8W6j558' },
-          { title: 'Hardware Timers', description: 'Configure Timer1.', videoUrl: 'https://www.youtube.com/watch?v=999o8W6j558' }
-        ]
-      }
-    ];
-
-    for (const cData of coursesData) {
-      const course = await Course.create(cData);
-      console.log(`Created course: ${course.title}`);
-    }
-
     console.log('Seeding available tutoring slots...');
 
     const getFutureDate = (daysAhead) => {

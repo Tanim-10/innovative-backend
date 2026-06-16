@@ -1,6 +1,7 @@
 import User from '../models/User.model.js';
 import bcryptjs from 'bcryptjs';
 import { normalizeIndianMobile, isValidIndianMobile10 } from '../utils/mobileOtp.util.js';
+import { uploadToCloudinary } from '../middleware/upload.middleware.js';
 
 // Get user profile
 export const getProfile = async (req, res) => {
@@ -187,5 +188,18 @@ export const getPublicProfile = async (req, res) => {
     res.json({ success: true, data: user });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Error fetching public profile' });
+  }
+};
+
+// Upload avatar to Cloudinary
+export const uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file provided' });
+    }
+    const result = await uploadToCloudinary(req.file.buffer, 'innovative-hub/avatars');
+    res.json({ success: true, data: { url: result.secure_url, publicId: result.public_id } });
+  } catch (error) {
+    next(error);
   }
 };
