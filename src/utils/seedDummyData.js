@@ -147,56 +147,7 @@ const seedAllDummyData = async () => {
     console.log('Seeded available session slots.');
 
     console.log('Seeding approved workshops...');
-    const workshopsData = [
-      {
-        title: 'ROS2 Nav2 Navigation Stack Deep Dive',
-        description: 'Learn how to configure navigation costmaps, AMCL, and BT Navigator in ROS2. This workshop covers practical configuration and simulation in Gazebo.',
-        hostName: croft.name,
-        hostEmail: croft.email,
-        hostId: croft._id,
-        hostLinkedIn: croft.socials?.linkedin || 'https://linkedin.com/in/ryancroft',
-        thumbnail: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
-        date: getFutureDate(3),
-        time: '03:00 PM - 05:00 PM',
-        duration: '2 Hours',
-        meetingLink: 'https://meet.google.com/abc-defg-hij',
-        googleFormLink: 'https://forms.gle/dummy-workshop-form',
-        showOnHomepage: true,
-        status: 'approved'
-      },
-      {
-        title: 'Building ESP32 Firmware with FreeRTOS',
-        description: 'An hands-on session on designing multi-tasked firmware on ESP32 microcontrollers. Learn about task priorities, queues, semaphores, and thread safety.',
-        hostName: aisha.name,
-        hostEmail: aisha.email,
-        hostId: aisha._id,
-        hostLinkedIn: aisha.socials?.linkedin || 'https://linkedin.com/in/aishasharma',
-        thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-        date: getFutureDate(5),
-        time: '10:00 AM - 12:00 PM',
-        duration: '2 Hours',
-        meetingLink: 'https://meet.google.com/xyz-pdqr-lmn',
-        googleFormLink: 'https://forms.gle/dummy-workshop-form',
-        showOnHomepage: true,
-        status: 'approved'
-      },
-      {
-        title: 'Mastering Arduino Hardware Interrupts',
-        description: 'Understand how interrupts work in AVR microcontrollers. Learn to write low-latency ISRs, handle switch bouncing, and measure pulse widths precisely.',
-        hostName: liam.name,
-        hostEmail: liam.email,
-        hostId: liam._id,
-        hostLinkedIn: liam.socials?.linkedin || 'https://linkedin.com/in/liamvance',
-        thumbnail: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=800&q=80',
-        date: getFutureDate(7),
-        time: '02:00 PM - 03:30 PM',
-        duration: '1.5 Hours',
-        meetingLink: 'https://meet.google.com/mno-pqrs-tuv',
-        googleFormLink: 'https://forms.gle/dummy-workshop-form',
-        showOnHomepage: true,
-        status: 'approved'
-      }
-    ];
+    const workshopsData = [];
 
     await Workshop.insertMany(workshopsData);
     console.log('Seeded approved workshops.');

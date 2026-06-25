@@ -18,7 +18,7 @@ const dummyProjects = [
     gstPercentage: 18,
     stockQuantity: 15,
     images: [
-      { url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600' }
+      { url: 'https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&q=80&w=600' }
     ],
     isProject: true,
     projectType: 'combo_components',
@@ -65,7 +65,7 @@ const int echoPin = 12;
     gstPercentage: 18,
     stockQuantity: 20,
     images: [
-      { url: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=600' }
+      { url: 'https://images.unsplash.com/photo-1553406830-ef25136758e3?auto=format&fit=crop&q=80&w=600' }
     ],
     isProject: true,
     projectType: 'combo_components',
@@ -110,7 +110,7 @@ const int echoPin = 12;
     gstPercentage: 18,
     stockQuantity: 8,
     images: [
-      { url: 'https://images.unsplash.com/photo-1617791160505-6f006e121980?auto=format&fit=crop&q=80&w=600' }
+      { url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600' }
     ],
     isProject: true,
     projectType: 'ready_made',
@@ -146,7 +146,7 @@ const int echoPin = 12;
     gstPercentage: 18,
     stockQuantity: 10,
     images: [
-      { url: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=600' }
+      { url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600' }
     ],
     isProject: true,
     projectType: 'ready_made',
