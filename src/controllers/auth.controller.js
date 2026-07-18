@@ -6,15 +6,21 @@ import Admin from '../models/Admin.model.js';
 import { sendWelcomeEmail, sendPasswordResetEmail, sendVerificationEmail, getFrontendBaseUrl } from '../utils/mailer.js';
 import { normalizeIndianMobile, isValidIndianMobile10 } from '../utils/mobileOtp.util.js';
 
-const googleClient = process.env.GOOGLE_CLIENT_ID
-  ? new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
-  : null;
+let googleClient = null;
+
+const getGoogleClient = () => {
+  if (!googleClient && process.env.GOOGLE_CLIENT_ID) {
+    googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  }
+  return googleClient;
+};
 
 // Verify Google ID token properly
 const verifyGoogleToken = async (tokenId) => {
-  if (!googleClient) return null;
+  const client = getGoogleClient();
+  if (!client) return null;
   try {
-    const ticket = await googleClient.verifyIdToken({
+    const ticket = await client.verifyIdToken({
       idToken: tokenId,
       audience: process.env.GOOGLE_CLIENT_ID,
     });

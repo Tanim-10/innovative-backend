@@ -1,8 +1,7 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import connectDB from './config/db.js';
 import app from './app.js';
 
-dotenv.config();
 connectDB();
 
 // Create default admin if ADMIN_EMAIL and ADMIN_PASSWORD are provided

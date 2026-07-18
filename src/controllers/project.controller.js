@@ -114,6 +114,28 @@ export const getAdminProjects = async (req, res, next) => {
   }
 };
 
+// Normalize media array (images or videos): URLs or { url, publicId }
+const normalizeMedia = (list) => {
+  if (!list) return [];
+  const arr = Array.isArray(list) ? list : [list];
+  return arr
+    .map((item) => {
+      if (!item) return null;
+      if (typeof item === 'string') {
+        const url = item.trim();
+        return url ? { url, publicId: '' } : null;
+      }
+      if (typeof item === 'object') {
+        const url = (item.url || item.secure_url || '').toString().trim();
+        if (!url) return null;
+        const publicId = (item.publicId || item.public_id || '').toString();
+        return { url, publicId };
+      }
+      return null;
+    })
+    .filter(Boolean);
+};
+
 // ADMIN: CREATE PROJECT
 export const createProject = async (req, res, next) => {
   try {
@@ -162,8 +184,8 @@ export const createProject = async (req, res, next) => {
       gstMode: gstMode || 'including',
       gstPercentage: gstPercentage || 18,
       stockQuantity: stockQuantity || 0,
-      images: images || [],
-      videos: videos || [],
+      images: normalizeMedia(images),
+      videos: normalizeMedia(videos),
       isProject: true,
       projectType,
       components: parsedComponents,
@@ -206,6 +228,13 @@ export const updateProject = async (req, res, next) => {
       if (typeof updates.components === 'string') {
         updates.components = updates.components.split(',').map(c => c.trim()).filter(Boolean);
       }
+    }
+
+    if (updates.images !== undefined) {
+      updates.images = normalizeMedia(updates.images);
+    }
+    if (updates.videos !== undefined) {
+      updates.videos = normalizeMedia(updates.videos);
     }
 
     const updatedProject = await Product.findByIdAndUpdate(id, updates, {
