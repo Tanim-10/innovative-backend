@@ -105,4 +105,28 @@ export const uploadOfflineDoc = multer({
   limits: { fileSize: 15 * 1024 * 1024 },
 });
 
+/** Ideas and Resource Hub files (Images + PDF + PPT/PPTX) */
+const ideaFileFilter = (req, file, cb) => {
+  const allowedMimeTypes = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp',
+    'application/pdf',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  ];
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only images (JPG, PNG, WEBP), PDF, and PPT/PPTX files are allowed'), false);
+  }
+};
+
+export const uploadIdeaFile = multer({
+  storage,
+  fileFilter: ideaFileFilter,
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB limit
+});
+
 export default upload;

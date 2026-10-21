@@ -1,6 +1,7 @@
 import User from '../models/User.model.js';
 import bcryptjs from 'bcryptjs';
 import { normalizeIndianMobile, isValidIndianMobile10 } from '../utils/mobileOtp.util.js';
+import { uploadToCloudinary } from '../middleware/upload.middleware.js';
 
 // Get user profile
 export const getProfile = async (req, res) => {
@@ -15,7 +16,7 @@ export const getProfile = async (req, res) => {
 // Update user profile
 export const updateProfile = async (req, res) => {
   try {
-    const { name, mobile } = req.body || {};
+    const { name, mobile, bio, expertise, socials, education, profileImage } = req.body || {};
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -44,16 +45,47 @@ export const updateProfile = async (req, res) => {
       }
     }
 
+    if (bio !== undefined) user.bio = bio;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+
+    if (expertise !== undefined) {
+      if (Array.isArray(expertise)) {
+        user.expertise = expertise;
+      } else if (typeof expertise === 'string') {
+        user.expertise = expertise.split(',').map(s => s.trim()).filter(Boolean);
+      }
+    }
+
+    if (socials !== undefined) {
+      user.socials = {
+        ...user.socials,
+        ...socials
+      };
+    }
+
+    if (education !== undefined) {
+      user.education = {
+        ...user.education,
+        ...education
+      };
+    }
+
     await user.save();
 
     const userResponse = {
       id: user._id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       mobile: user.mobile,
       mobileVerified: user.mobileVerified === true,
       profileImage: user.profileImage,
       addresses: user.addresses,
+      role: user.role,
+      bio: user.bio,
+      expertise: user.expertise,
+      socials: user.socials,
+      education: user.education
     };
     res.json({ success: true, data: userResponse });
   } catch (err) {
@@ -142,5 +174,32 @@ export const setDefaultAddress = async (req, res) => {
     res.json({ success: true, data: user });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Error setting default address' });
+  }
+};
+
+// Get public profile
+export const getPublicProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select('name role profileImage bio expertise socials education createdAt');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, data: user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error fetching public profile' });
+  }
+};
+
+// Upload avatar to Cloudinary
+export const uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file provided' });
+    }
+    const result = await uploadToCloudinary(req.file.buffer, 'innovative-hub/avatars');
+    res.json({ success: true, data: { url: result.secure_url, publicId: result.public_id } });
+  } catch (error) {
+    next(error);
   }
 };

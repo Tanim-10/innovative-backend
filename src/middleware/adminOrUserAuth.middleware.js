@@ -34,7 +34,7 @@ const adminOrUserAuth = async (req, res, next) => {
       if (!user) return res.status(401).json({ success: false, message: 'User not found' });
       req.user = user;
       req.userId = decoded.id;
-      req.isAdmin = false;
+      req.isAdmin = user.role === 'admin';
       return next();
     }
 

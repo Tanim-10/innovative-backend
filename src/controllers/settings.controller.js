@@ -23,8 +23,7 @@ export const changePassword = async (req, res, next) => {
       });
     }
 
-    const salt = await bcryptjs.genSalt(10);
-    admin.password = await bcryptjs.hash(newPassword, salt);
+    admin.password = newPassword;
     await admin.save();
 
     res.status(200).json({

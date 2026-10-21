@@ -7,21 +7,21 @@ dotenv.config();
 const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 const imageSetA = [
-  'https://res.cloudinary.com/demo/image/upload/v1690000001/innovativehub/flex_sensor_1.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000002/innovativehub/flex_sensor_2.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000003/innovativehub/flex_sensor_3.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000004/innovativehub/flex_sensor_4.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000005/innovativehub/flex_sensor_5.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000006/innovativehub/flex_sensor_6.jpg',
+  'https://images.unsplash.com/photo-1608564697071-ddf911d81370?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1517059224940-d4af9eec41b7?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1591405351990-4726e331f141?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1553406830-ef2513677841?auto=format&fit=crop&w=600&q=80',
 ];
 
 const imageSetB = [
-  'https://res.cloudinary.com/demo/image/upload/v1690000011/innovativehub/arduino_uno_1.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000012/innovativehub/arduino_uno_2.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000013/innovativehub/arduino_uno_3.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000014/innovativehub/arduino_uno_4.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000015/innovativehub/arduino_uno_5.jpg',
-  'https://res.cloudinary.com/demo/image/upload/v1690000016/innovativehub/arduino_uno_6.jpg',
+  'https://images.unsplash.com/photo-1553406830-ef2513677841?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1591405351990-4726e331f141?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1517059224940-d4af9eec41b7?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&w=600&q=80',
 ];
 
 const buildImages = (urls) => urls.map((url) => ({ url, publicId: '' }));

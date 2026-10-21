@@ -6,12 +6,17 @@ import {
   addAddress,
   updateAddress,
   deleteAddress,
-  setDefaultAddress
+  setDefaultAddress,
+  getPublicProfile,
+  uploadAvatar
 } from '../controllers/profile.controller.js';
 import userAuth from '../middleware/userAuth.middleware.js';
+import upload from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
+router.get('/profile/:userId', getPublicProfile);
+router.post('/upload-avatar', userAuth, upload.single('file'), uploadAvatar);
 router.get('/', userAuth, getProfile);
 router.put('/', userAuth, updateProfile);
 router.put('/change-password', userAuth, changePassword);
